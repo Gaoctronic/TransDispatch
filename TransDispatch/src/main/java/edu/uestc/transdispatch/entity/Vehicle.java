@@ -20,10 +20,12 @@ public class Vehicle {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "deleted")
+    private Boolean deleted = false;
+
     @ManyToOne
     @JoinColumn(name = "current_poi_id")
     private Poi currentPoi;
-
 
     @ManyToOne
     @JoinColumn(name = "current_route_id")
@@ -43,6 +45,9 @@ public class Vehicle {
 
     @Column(name = "current_action")
     private String currentAction;
+
+    @Column(name = "route_position")
+    private Double routePosition;
 
     @OneToMany(
             mappedBy = "vehicle"

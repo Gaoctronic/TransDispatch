@@ -1,7 +1,9 @@
 package edu.uestc.transdispatch.service;
 
+import edu.uestc.transdispatch.entity.Route;
 import edu.uestc.transdispatch.entity.Vehicle;
 import edu.uestc.transdispatch.repository.VehicleRepository;
+import edu.uestc.transdispatch.repository.RouteRepository;
 
 import org.springframework.stereotype.Service;
 
@@ -17,14 +19,15 @@ public class VehicleService {
 
 
     private final VehicleRepository vehicleRepository;
-
+    private final RouteRepository routeRepository;
 
 
     public VehicleService(
-            VehicleRepository vehicleRepository){
-
+            VehicleRepository vehicleRepository,
+            RouteRepository routeRepository
+    ){
         this.vehicleRepository = vehicleRepository;
-
+        this.routeRepository = routeRepository;
     }
 
 
@@ -32,10 +35,8 @@ public class VehicleService {
     /**
      * 查询所有车辆
      */
-    public List<Vehicle> getAllVehicles(){
-
-        return vehicleRepository.findAll();
-
+    public List<Vehicle> getAllVehicles() {
+        return vehicleRepository.findByDeletedFalse();
     }
 
 
@@ -43,11 +44,8 @@ public class VehicleService {
     /**
      * 根据id查询车辆
      */
-    public Optional<Vehicle> getVehicleById(
-            Integer id){
-
-        return vehicleRepository.findById(id);
-
+    public Optional<Vehicle> getVehicleById(Integer id) {
+        return vehicleRepository.findByIdAndDeletedFalse(id);
     }
 
 
@@ -67,19 +65,28 @@ public class VehicleService {
     /**
      * 删除车辆
      */
-    public void deleteVehicle(Integer id){
+    public void deleteVehicle(Integer id) {
+        Vehicle vehicle = vehicleRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow();
 
-        vehicleRepository.deleteById(id);
+        vehicle.setDeleted(true);
 
+        vehicleRepository.save(vehicle);
     }
 
 
 
-    /**
-     * 任务3：增加车辆
-     */
-    public Vehicle addVehicle(Vehicle vehicle) {
-        vehicle.setStatus("正常"); // 默认状态设为正常
+    public Vehicle createVehicleOnRoute(
+            Integer routeId,
+            Vehicle vehicle
+    ) {
+        Route route = routeRepository
+                .findById(routeId)
+                .orElseThrow();
+
+        vehicle.setCurrentRoute(route);
+
         return vehicleRepository.save(vehicle);
     }
 

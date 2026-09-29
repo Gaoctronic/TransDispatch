@@ -2,8 +2,10 @@ package edu.uestc.transdispatch.service;
 
 
 import edu.uestc.transdispatch.entity.Demand;
+import edu.uestc.transdispatch.entity.Poi;
 import edu.uestc.transdispatch.repository.DemandRepository;
 
+import edu.uestc.transdispatch.repository.PoiRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,37 +20,25 @@ public class DemandService {
 
 
     private final DemandRepository demandRepository;
+    private final PoiRepository poiRepository;
 
 
     public DemandService(
-            DemandRepository demandRepository){
+            DemandRepository demandRepository,
+            PoiRepository poiRepository
+    ){
 
         this.demandRepository = demandRepository;
-
+        this.poiRepository = poiRepository;
     }
 
-
-
-    /**
-     * 查询所有需求
-     */
     public List<Demand> getAllDemands(){
-
-        return demandRepository.findAll();
-
+        return demandRepository.findByDeletedFalse();
     }
 
-
-
-    /**
-     * 根据id查询需求
-     */
     public Optional<Demand> getDemandById(Integer id){
-
-        return demandRepository.findById(id);
-
+        return demandRepository.findByIdAndDeletedFalse(id);
     }
-
 
 
     /**
@@ -61,14 +51,38 @@ public class DemandService {
     }
 
 
-
     /**
-     * 删除需求
+     * 基于工厂生成需求
      */
+    public Demand createDemandFromFactory(
+            Integer factoryId,
+            Demand demand
+    ){
+
+        Poi factory = poiRepository
+                .findById(factoryId)
+                .orElseThrow();
+
+        if (!"FACTORY".equals(factory.getPoiType())) {
+            throw new IllegalArgumentException(
+                    "指定的 POI 不是工厂"
+            );
+        }
+
+        demand.setStartPoi(factory);
+        demand.setStatus("WAITING");
+
+        return demandRepository.save(demand);
+    }
+
     public void deleteDemand(Integer id){
+        Demand demand = demandRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow();
 
-        demandRepository.deleteById(id);
+        demand.setDeleted(true);
 
+        demandRepository.save(demand);
     }
 
 

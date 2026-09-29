@@ -71,26 +71,27 @@ public class DemandController {
 
 
 
-    /**
-     * 创建运输需求
-     *
-     * POST /demands
-     */
     @PostMapping
     public Demand createDemand(
+            @RequestParam Integer factoryId,
             @RequestBody Demand demand
     ){
-
-        return demandService
-                .saveDemand(demand);
-
+        return demandService.createDemandFromFactory(
+                factoryId,
+                demand
+        );
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteDemand(
+            @PathVariable Integer id
+    ){
+        demandService.deleteDemand(id);
+    }
 
 
     /**
      * 调度需求
-     *
      * POST /demands/{id}/dispatch
      */
     @PostMapping("/{id}/dispatch")

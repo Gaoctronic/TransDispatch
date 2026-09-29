@@ -77,33 +77,26 @@ public class VehicleController {
 
     }
 
-
-
     /**
      * 删除车辆
-     *
      * DELETE /vehicles/{id}
      */
     @DeleteMapping("/{id}")
     public void deleteVehicle(
             @PathVariable Integer id
-    ){
-
+    ) {
         vehicleService.deleteVehicle(id);
-
     }
 
-
-
-    // 任务3：增加车辆
-    @PostMapping("/add")
-    public String add(@RequestBody Vehicle vehicle) {
-        return vehicleService.addVehicle(vehicle) != null ? "增加成功" : "增加失败";
+    @PostMapping
+    public Vehicle createVehicle(
+            @RequestParam Integer routeId,
+            @RequestBody Vehicle vehicle
+    ) {
+        return vehicleService.createVehicleOnRoute(
+                routeId,
+                vehicle
+        );
     }
 
-    // 任务4：失效车辆（软删除）
-    @PostMapping("/invalid/{id}")
-    public String invalid(@PathVariable Integer id) {
-        return vehicleService.invalidVehicle(id) ? "失效成功" : "失效失败";
-    }
 }

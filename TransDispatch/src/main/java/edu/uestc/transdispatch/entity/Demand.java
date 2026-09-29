@@ -21,6 +21,9 @@ public class Demand {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "deleted")
+    private Boolean deleted = false;
+
     @ManyToOne
     @JoinColumn(name = "start_poi_id")
     private Poi startPoi;
