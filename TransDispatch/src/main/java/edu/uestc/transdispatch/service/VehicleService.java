@@ -74,4 +74,27 @@ public class VehicleService {
     }
 
 
+
+    /**
+     * 任务3：增加车辆
+     */
+    public Vehicle addVehicle(Vehicle vehicle) {
+        vehicle.setStatus("正常"); // 默认状态设为正常
+        return vehicleRepository.save(vehicle);
+    }
+
+
+    
+    /**
+     * 任务4：失效车辆（软删除）
+     */
+    public boolean invalidVehicle(Integer id) {
+        Vehicle vehicle = vehicleRepository.findById(id).orElse(null);
+        if (vehicle != null) {
+            vehicle.setStatus("失效"); // 只改状态，不删数据
+            vehicleRepository.save(vehicle); // 更新回数据库
+            return true;
+        }
+        return false;
+    }
 }
