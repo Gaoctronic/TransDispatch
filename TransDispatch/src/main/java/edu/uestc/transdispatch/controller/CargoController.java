@@ -37,7 +37,7 @@ public class CargoController {
     @GetMapping
     public List<Cargo> getAllCargos(){
 
-        return cargoService.getAllCargos();
+        return cargoService.getAllCargo();
 
     }
 

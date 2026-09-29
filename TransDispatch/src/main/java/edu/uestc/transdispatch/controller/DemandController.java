@@ -1,5 +1,6 @@
 package edu.uestc.transdispatch.controller;
 
+import edu.uestc.transdispatch.dto.DemandCreateDTO;
 import edu.uestc.transdispatch.entity.Demand;
 import edu.uestc.transdispatch.entity.TransTask;
 import edu.uestc.transdispatch.service.DemandService;
@@ -78,11 +79,28 @@ public class DemandController {
      */
     @PostMapping
     public Demand createDemand(
-            @RequestBody Demand demand
+            @RequestBody DemandCreateDTO request
     ){
 
         return demandService
-                .saveDemand(demand);
+                .createDemand(request);
+
+    }
+
+
+
+    /**
+     * 失效运输需求
+     *
+     * PUT /demands/{id}/invalidate
+     */
+    @PutMapping("/{id}/invalidate")
+    public Demand invalidateDemand(
+            @PathVariable Integer id
+    ){
+
+        return demandService
+                .invalidateDemand(id);
 
     }
 

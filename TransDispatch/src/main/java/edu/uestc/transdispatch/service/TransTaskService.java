@@ -5,6 +5,8 @@ import edu.uestc.transdispatch.entity.TransTask;
 import edu.uestc.transdispatch.repository.TransTaskRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,6 +63,21 @@ public class TransTaskService {
     public TransTask saveTask(
             TransTask task){
 
+        return transTaskRepository.save(task);
+
+    }
+
+
+    /**
+     * 更新已有任务的状态
+     */
+    public TransTask updateStatus(Integer id, String status){
+
+        TransTask task = transTaskRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Task not found: " + id));
+
+        task.setStatus(status);
         return transTaskRepository.save(task);
 
     }
