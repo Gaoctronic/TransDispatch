@@ -94,4 +94,16 @@ public class VehicleController {
     }
 
 
+
+    // 任务3：增加车辆
+    @PostMapping("/add")
+    public String add(@RequestBody Vehicle vehicle) {
+        return vehicleService.addVehicle(vehicle) != null ? "增加成功" : "增加失败";
+    }
+
+    // 任务4：失效车辆（软删除）
+    @PostMapping("/invalid/{id}")
+    public String invalid(@PathVariable Integer id) {
+        return vehicleService.invalidVehicle(id) ? "失效成功" : "失效失败";
+    }
 }
