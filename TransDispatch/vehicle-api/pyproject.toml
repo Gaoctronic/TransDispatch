@@ -1,0 +1,18 @@
+# 仅存放工具配置（pytest / ruff）。
+# 依赖请使用 requirements.txt 与 requirements-dev.txt 安装。
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["B008"]  # FastAPI 的 Depends/Path 默认值写法属于框架约定
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
