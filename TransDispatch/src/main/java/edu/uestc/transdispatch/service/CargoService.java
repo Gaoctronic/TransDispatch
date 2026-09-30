@@ -33,7 +33,7 @@ public class CargoService {
     /**
      * 查询所有货物
      */
-    public List<Cargo> getAllCargo(){
+    public List<Cargo> getAllCargos(){
 
         return cargoRepository.findAll();
 

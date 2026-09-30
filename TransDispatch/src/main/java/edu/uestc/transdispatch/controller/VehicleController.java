@@ -32,7 +32,6 @@ public class VehicleController {
 
     /**
      * 查询所有车辆
-     *
      * GET /vehicles
      */
     @GetMapping
@@ -46,7 +45,6 @@ public class VehicleController {
 
     /**
      * 根据id查询车辆
-     *
      * GET /vehicles/{id}
      */
     @GetMapping("/{id}")
@@ -64,7 +62,6 @@ public class VehicleController {
 
     /**
      * 新增车辆
-     *
      * POST /vehicles
      */
     @PostMapping
@@ -99,4 +96,39 @@ public class VehicleController {
         );
     }
 
+    /**
+     * 更新车辆状态
+     * DELETE /vehicles/{id}
+     */
+    @PutMapping("/{id}/location")
+    public Vehicle updateLocation(
+            @PathVariable Integer id,
+            @RequestParam Integer poiId,
+            @RequestParam Integer routeId
+    ) {
+        return vehicleService.updateLocation(
+                id,
+                poiId,
+                routeId
+        );
+    }
+
+    @PutMapping("/{id}/status")
+    public Vehicle updateStatus(
+            @PathVariable Integer id,
+            @RequestParam String status
+    ) {
+        return vehicleService.updateStatus(id, status);
+    }
+
+    @GetMapping("/{vehicleId}/match-score")
+    public Double calculateMatchScore(
+            @PathVariable Integer vehicleId,
+            @RequestParam Integer demandId
+    ) {
+        return vehicleService.calculateMatchScore(
+                demandId,
+                vehicleId
+        );
+    }
 }

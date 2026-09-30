@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -27,9 +28,13 @@ public class TransTask {
     @JoinColumn(name = "cargo_id")
     private Cargo cargo;
 
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id")
-    private Vehicle vehicle;
+    @ManyToMany
+    @JoinTable(
+            name = "trans_task_vehicle",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "vehicle_id")
+    )
+    private List<Vehicle> vehicles;
 
     @ManyToOne
     @JoinColumn(name = "route_id")
@@ -49,4 +54,7 @@ public class TransTask {
 
     @Column(name = "actual_cost")
     private Double actualCost;
+
+    @Column(name = "revenue")
+    private Double revenue;
 }

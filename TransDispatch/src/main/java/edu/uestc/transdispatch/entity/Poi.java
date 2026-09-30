@@ -26,6 +26,9 @@ public class Poi {
     @Column(name = "latitude")
     private Double latitude;
 
+    @Column(name = "deleted")
+    private Boolean deleted = false;
+
     @OneToMany(
             mappedBy = "currentPoi"
     )

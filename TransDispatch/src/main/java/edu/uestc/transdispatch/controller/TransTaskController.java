@@ -65,35 +65,25 @@ public class TransTaskController {
 
     /**
      * 创建任务
-     *
      * POST /tasks
      */
     @PostMapping
     public TransTask createTask(
-            @RequestBody TransTask task
-    ){
-
-        return transTaskService
-                .saveTask(task);
-
+            @RequestParam Integer demandId,
+            @RequestBody List<Integer> vehicleIds
+    ) {
+        return transTaskService.createTask(
+                demandId,
+                vehicleIds
+        );
     }
 
-
-
-    /**
-     * 更新任务状态
-     *
-     * PUT /tasks/{id}/status
-     */
-    @PutMapping("/{id}/status")
-    public TransTask updateStatus(
+    @PutMapping("/{id}/revenue")
+    public Double calculateRevenue(
             @PathVariable Integer id,
-            @RequestParam String status
-    ){
-
-        return transTaskService
-                .updateStatus(id,status);
-
+            @RequestParam Double income
+    ) {
+        return transTaskService.calculateRevenue(id, income);
     }
 
 

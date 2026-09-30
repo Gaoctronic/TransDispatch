@@ -49,8 +49,8 @@ public class Vehicle {
     @Column(name = "route_position")
     private Double routePosition;
 
-    @OneToMany(
-            mappedBy = "vehicle"
+    @ManyToMany(
+            mappedBy = "vehicles"
     )
     private List<TransTask> tasks;
 

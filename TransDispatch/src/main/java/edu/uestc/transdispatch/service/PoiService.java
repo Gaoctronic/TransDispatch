@@ -25,9 +25,7 @@ public class PoiService {
      * 构造器注入
      */
     public PoiService(PoiRepository poiRepository){
-
         this.poiRepository = poiRepository;
-
     }
 
 
@@ -36,9 +34,7 @@ public class PoiService {
      * 查询所有POI
      */
     public List<Poi> getAllPois(){
-
         return poiRepository.findAll();
-
     }
 
 
@@ -47,9 +43,7 @@ public class PoiService {
      * 根据id查询POI
      */
     public Optional<Poi> getPoiById(Integer id){
-
         return poiRepository.findById(id);
-
     }
 
 
@@ -58,20 +52,42 @@ public class PoiService {
      * 保存POI
      */
     public Poi savePoi(Poi poi){
-
         return poiRepository.save(poi);
-
     }
 
 
+    public Poi createPoi(Poi poi) {
+        poi.setDeleted(false);
+        return poiRepository.save(poi);
+    }
 
     /**
      * 删除POI
      */
-    public void deletePoi(Integer id){
+    public void deletePoi(Integer id) {
+        Poi poi = poiRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow();
 
-        poiRepository.deleteById(id);
-
+        poi.setDeleted(true);
+        poiRepository.save(poi);
     }
 
+    public Poi createFactory(Poi factory) {
+        factory.setPoiType("FACTORY");
+        return poiRepository.save(factory);
+    }
+
+    public void deleteFactory(Integer id) {
+        Poi factory = poiRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow();
+
+        if (!"FACTORY".equals(factory.getPoiType())) {
+            throw new IllegalArgumentException("该 POI 不是工厂");
+        }
+
+        factory.setDeleted(true);
+        poiRepository.save(factory);
+    }
 }

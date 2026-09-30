@@ -1,7 +1,11 @@
 package edu.uestc.transdispatch.service;
 
+import edu.uestc.transdispatch.entity.Demand;
 import edu.uestc.transdispatch.entity.Route;
 import edu.uestc.transdispatch.entity.Vehicle;
+import edu.uestc.transdispatch.entity.Poi;
+import edu.uestc.transdispatch.repository.DemandRepository;
+import edu.uestc.transdispatch.repository.PoiRepository;
 import edu.uestc.transdispatch.repository.VehicleRepository;
 import edu.uestc.transdispatch.repository.RouteRepository;
 
@@ -19,15 +23,21 @@ public class VehicleService {
 
 
     private final VehicleRepository vehicleRepository;
+    private final PoiRepository poiRepository;
     private final RouteRepository routeRepository;
+    private final DemandRepository demandRepository;
 
 
     public VehicleService(
             VehicleRepository vehicleRepository,
-            RouteRepository routeRepository
+            PoiRepository poiRepository,
+            RouteRepository routeRepository,
+            DemandRepository demandRepository
     ){
         this.vehicleRepository = vehicleRepository;
+        this.poiRepository = poiRepository;
         this.routeRepository = routeRepository;
+        this.demandRepository = demandRepository;
     }
 
 
@@ -103,5 +113,87 @@ public class VehicleService {
             return true;
         }
         return false;
+    }
+
+    public Vehicle updateLocation(
+            Integer vehicleId,
+            Integer poiId,
+            Integer routeId
+    ) {
+        Vehicle vehicle = vehicleRepository
+                .findByIdAndDeletedFalse(vehicleId)
+                .orElseThrow();
+
+        Poi poi = poiRepository
+                .findById(poiId)
+                .orElseThrow();
+
+        Route route = routeRepository
+                .findById(routeId)
+                .orElseThrow();
+
+        vehicle.setCurrentPoi(poi);
+        vehicle.setCurrentRoute(route);
+
+        return vehicleRepository.save(vehicle);
+    }
+
+    public Vehicle updateStatus(
+            Integer vehicleId,
+            String status
+    ) {
+        Vehicle vehicle = vehicleRepository
+                .findByIdAndDeletedFalse(vehicleId)
+                .orElseThrow();
+
+        vehicle.setStatus(status);
+
+        return vehicleRepository.save(vehicle);
+    }
+
+    public Double calculateMatchScore(
+            Integer demandId,
+            Integer vehicleId
+    ) {
+        Demand demand = demandRepository
+                .findByIdAndDeletedFalse(demandId)
+                .orElseThrow();
+
+        Vehicle vehicle = vehicleRepository
+                .findByIdAndDeletedFalse(vehicleId)
+                .orElseThrow();
+
+        double score = 0.0;
+
+        // 车辆类型匹配
+        if (demand.getCargo() != null
+                && demand.getCargo().getSuitableVehicleTypes() != null
+                && demand.getCargo().getSuitableVehicleTypes()
+                .contains(vehicle.getVehicleType())) {
+            score += 50;
+        }
+
+        // 车辆当前位置与需求起点一致
+        if (vehicle.getCurrentPoi() != null
+                && demand.getStartPoi() != null
+                && vehicle.getCurrentPoi().getId()
+                .equals(demand.getStartPoi().getId())) {
+            score += 30;
+        }
+
+        // 车辆当前路线与需求路线方向暂时匹配
+        if (vehicle.getCurrentRoute() != null
+                && demand.getStartPoi() != null
+                && demand.getEndPoi() != null
+                && vehicle.getCurrentRoute().getStartPoi() != null
+                && vehicle.getCurrentRoute().getEndPoi() != null
+                && vehicle.getCurrentRoute().getStartPoi().getId()
+                .equals(demand.getStartPoi().getId())
+                && vehicle.getCurrentRoute().getEndPoi().getId()
+                .equals(demand.getEndPoi().getId())) {
+            score += 20;
+        }
+
+        return score;
     }
 }
